@@ -11,8 +11,7 @@ class Game
     p @correct_seq
   end
 
-
-  protected 
+  protected
 
   def decrement_turn
     @remaining_turns -= 1
@@ -25,18 +24,14 @@ class Game
   def colors_outplace(colors)
     @correct_seq.filter { |color| colors.include?(color) }.length
   end
-
 end
 
+# Class to play the game as a player guessing
 class Player < Game
-
-  def initialize(colors)
-    super(colors)
-  end
-
   def play_game
     while @remaining_turns.positive?
       break if play_round_player
+
       puts "Remaining turns: #{@remaining_turns}"
     end
     if @remaining_turns.zero?
@@ -59,26 +54,30 @@ class Player < Game
   end
 end
 
+# Class that executes the game making the computer guess the sequence
 class Computer < Game
-
-  def initialize(colors)
-    super(colors)
-  end
-
   def play_game
-#    while @remaining_turns.positive?
- #     break if play_round
-  #    puts "Remaining turns: #{@remaining_turns}"
-  #  end
-  #  if @remaining_turns.zero?
-  #    puts 'You lost!'
-  #  else
-  #    puts "Congradulations, you won with #{@remaining_turns} remaining turns!"
-  #  end
+    #    while @remaining_turns.positive?
+    #     break if play_round
+    #    puts "Remaining turns: #{@remaining_turns}"
+    #  end
+    #  if @remaining_turns.zero?
+    #    puts 'You lost!'
+    #  else
+    #    puts "Congradulations, you won with #{@remaining_turns} remaining turns!"
+    #  end
     algotithm
   end
-  
+
   private
+
+  def colors_algorithm_inplace(colors, seq)
+    seq.filter.with_index { |color, index| color == colors[index] }.length
+  end
+
+  def colors_algorithm_outplace(colors, seq)
+    seq.filter { |color| colors.include?(color) }.length
+  end
 
   def play_round(colors)
     in_place = colors_inplace(colors)
@@ -86,9 +85,18 @@ class Computer < Game
     [in_place, out_place]
   end
 
+  def play_algorithm_round(colors, seq)
+    in_place = colors_algorithm_inplace(colors, seq)
+    out_place = colors_algorithm_outplace(colors, seq) - in_place
+    [in_place, out_place]
+  end
+
   def calc_combinations
     set = []
-    i = 0; j = 0; k = 0; l = 0
+    i = 0
+    j = 0
+    k = 0
+    l = 0
     while i < 6
       while j < 6
         while k < 6
@@ -111,10 +119,16 @@ class Computer < Game
   def algotithm
     set = calc_combinations
     guess = [@colors[0], @colors[0], @colors[1], @colors[1]]
-    hits = play_round(guess)
-    p hits
-  end
+    while @remaining_turns.positive?
+      hits = play_round(guess)
+      p guess
+      return true if hits[0] == 4
 
+      set = set.filter { |seq| play_algorithm_round(guess, seq) == hits }
+      guess = set[0]
+      @remaining_turns -= 1
+    end
+  end
 end
 
 colors = %w[red green blue yellow orange black]
