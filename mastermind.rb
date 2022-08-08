@@ -6,9 +6,9 @@ class Game
     @colors = Marshal.load(Marshal.dump(colors))
     puts 'colors:'
     p colors
-    @correct_seq = [colors.delete_at(rand(6)), colors.delete_at(rand(5)), colors.delete_at(rand(4)),
-                    colors.delete_at(rand(3))]
+    @correct_seq = [colors[rand(6)], colors[rand(6)], colors[rand(6)], colors[rand(6)]]
     @remaining_turns = 12
+    p @correct_seq
   end
 
 
@@ -75,43 +75,44 @@ class Computer < Game
   #  else
   #    puts "Congradulations, you won with #{@remaining_turns} remaining turns!"
   #  end
-    play_round
+    algotithm
   end
   
   private
 
-  def play_round
-    #in_place = colors_inplace(colors)
-    #out_place = colors_outplace(colors) - in_place
-    #in_place == 4
-    set = calc_combinations
-    puts set.length
+  def play_round(colors)
+    in_place = colors_inplace(colors)
+    out_place = colors_outplace(colors) - in_place
+    [in_place, out_place]
   end
 
   def calc_combinations
     set = []
-    i = 1; j = 1; k = 1; l = 1
-    while i <= 6
-      while j <= 6
-        while k <= 6
-          while l <= 6
-            set.push([i, j, k, l])
+    i = 0; j = 0; k = 0; l = 0
+    while i < 6
+      while j < 6
+        while k < 6
+          while l < 6
+            set.push([@colors[i], @colors[j], @colors[k], @colors[l]])
             l += 1
           end
-          l = 1
+          l = 0
           k += 1
         end
-        k = 1
+        k = 0
         j += 1
       end
-      j = 1
+      j = 0
       i += 1
     end
     set
   end
 
   def algotithm
-    
+    set = calc_combinations
+    guess = [@colors[0], @colors[0], @colors[1], @colors[1]]
+    hits = play_round(guess)
+    p hits
   end
 
 end
