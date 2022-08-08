@@ -30,7 +30,7 @@ end
 class Player < Game
   def play_game
     while @remaining_turns.positive?
-      break if play_round_player
+      break if play_round
 
       puts "Remaining turns: #{@remaining_turns}"
     end
@@ -57,15 +57,8 @@ end
 # Class that executes the game making the computer guess the sequence
 class Computer < Game
   def play_game
-    #    while @remaining_turns.positive?
-    #     break if play_round
-    #    puts "Remaining turns: #{@remaining_turns}"
-    #  end
-    #  if @remaining_turns.zero?
-    #    puts 'You lost!'
-    #  else
-    #    puts "Congradulations, you won with #{@remaining_turns} remaining turns!"
-    #  end
+    puts 'Print the sequence to guess'
+    @correct_seq = gets.chomp.split(' ')
     algotithm
   end
 
@@ -132,5 +125,11 @@ class Computer < Game
 end
 
 colors = %w[red green blue yellow orange black]
-computer = Computer.new(colors)
-computer.play_game
+puts 'Press 1 to make computer guess, else you guess it yourself'
+if gets.chomp.to_i == 1
+  computer = Computer.new(colors)
+  computer.play_game
+else
+  player = Player.new(colors)
+  player.play_game
+end
